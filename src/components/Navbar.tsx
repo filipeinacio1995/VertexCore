@@ -40,7 +40,7 @@ const Navbar = () => {
               </div>
               <span className="font-display text-lg font-bold tracking-wider text-foreground">
                 Vertex
-                <span style={{ color: "#00D0FF" }}>Coreawdaw</span>
+                <span style={{ color: "#00D0FF" }}>Core</span>
               </span>
             </Link>
 
