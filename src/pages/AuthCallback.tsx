@@ -11,13 +11,17 @@ export default function AuthCallback() {
   useEffect(() => {
     const initAuth = async () => {
       const token = searchParams.get("token");
+
+      // No session token -> back home
       if (!token) {
         navigate("/");
         return;
       }
 
+      // Save session token for later requests
       localStorage.setItem("tebex_token", token);
 
+      // Fetch user data (for navbar/profile)
       const userData = await getTebexUser(token);
       if (!userData) {
         navigate("/");
@@ -26,12 +30,21 @@ export default function AuthCallback() {
 
       setUser(userData);
 
-      // If user came here from checkout flow, finalize basket -> redirect to payment
+      // Checkout continuation (only if we started checkout from CartDrawer)
       const pending = localStorage.getItem("tebex_pending_checkout");
       const basketIdent = localStorage.getItem("tebex_basketIdent");
       const cartRaw = localStorage.getItem("tebex_cart");
 
-      if (pending === "1" && basketIdent && cartRaw) {
+      if (pending === "1") {
+        // If we lost data (refresh/new tab/etc), cancel cleanly to avoid "Missing basketIdent"
+        if (!basketIdent || !cartRaw) {
+          localStorage.setItem("tebex_pending_checkout", "0");
+          localStorage.removeItem("tebex_cart");
+          localStorage.removeItem("tebex_basketIdent");
+          navigate("/store");
+          return;
+        }
+
         const cart = JSON.parse(cartRaw);
 
         const resp = await fetch("/api/tebex/finalize", {
@@ -41,16 +54,22 @@ export default function AuthCallback() {
         });
 
         const data = await resp.json();
+
         if (resp.ok && data.checkoutUrl) {
+          // Clear pending state and redirect to Tebex payment page
           localStorage.setItem("tebex_pending_checkout", "0");
           window.location.href = data.checkoutUrl;
           return;
         }
 
+        // Finalize failed -> stop checkout, send user back to store
         console.error("Finalize failed:", data);
         localStorage.setItem("tebex_pending_checkout", "0");
+        navigate("/store");
+        return;
       }
 
+      // Normal login flow (navbar login button etc)
       navigate("/store");
     };
 
