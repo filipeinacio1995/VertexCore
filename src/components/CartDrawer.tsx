@@ -19,7 +19,7 @@ export default function CartDrawer({ isOpen, onClose }: { isOpen: boolean; onClo
         quantity: 1,
       }));
 
-      // store so AuthCallback can finalize after Tebex auth redirect
+      // Store cart for later (AuthCallback may need it)
       localStorage.setItem("tebex_cart", JSON.stringify(cart));
       localStorage.setItem("tebex_pending_checkout", "1");
 
@@ -29,18 +29,51 @@ export default function CartDrawer({ isOpen, onClose }: { isOpen: boolean; onClo
         body: JSON.stringify({ cart }),
       });
 
-      const data = await resp.json();
-      if (!resp.ok || !data.authUrl || !data.basketIdent) {
-        console.error(data);
+      // Safe parse (in case something returns HTML)
+      const text = await resp.text();
+      let data: any = {};
+      try {
+        data = JSON.parse(text);
+      } catch {
+        data = { raw: text };
+      }
+
+      if (!resp.ok) {
+        console.error("Start failed:", data);
         alert(data?.error || "Failed to start checkout.");
+        localStorage.setItem("tebex_pending_checkout", "0");
+        return;
+      }
+
+      if (!data?.basketIdent) {
+        console.error("Missing basketIdent from start:", data);
+        alert("Start did not return basketIdent.");
+        localStorage.setItem("tebex_pending_checkout", "0");
         return;
       }
 
       localStorage.setItem("tebex_basketIdent", data.basketIdent);
+
+      // ✅ Case A: Tebex returned checkoutUrl (no auth providers -> go straight to payment)
+      if (data.checkoutUrl) {
+        localStorage.setItem("tebex_pending_checkout", "0");
+        window.location.href = data.checkoutUrl;
+        return;
+      }
+
+      // ✅ Case B: Tebex returned authUrl (auth required -> go to auth, then AuthCallback finalizes)
+      if (!data.authUrl) {
+        console.error("No authUrl or checkoutUrl returned:", data);
+        alert("No authUrl returned. Check Tebex auth providers.");
+        localStorage.setItem("tebex_pending_checkout", "0");
+        return;
+      }
+
       window.location.href = data.authUrl;
     } catch (error) {
       console.error("Checkout error:", error);
       alert("Checkout error. Check console.");
+      localStorage.setItem("tebex_pending_checkout", "0");
     } finally {
       setIsCheckingOut(false);
     }
