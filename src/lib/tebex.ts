@@ -9,11 +9,6 @@ export async function getTebexCatalog() {
   } catch { return []; }
 }
 
-export const getLoginUrl = () => {
-  const returnUrl = `${window.location.origin}/auth/callback`;
-  return `https://checkout.tebex.io/accounts/auth?public_token=${TOKEN}&return_url=${returnUrl}`;
-};
-
 export async function getTebexUser(sessionToken: string) {
   try {
     const response = await fetch(`${HEADLESS_URL}/accounts/player`, {
@@ -23,33 +18,14 @@ export async function getTebexUser(sessionToken: string) {
       }
     });
     const json = await response.json();
-    return json.data || null;
-  } catch { return null; }
-}
-
-export async function createCheckout(packageIds: (number | string)[]) {
-  try {
-    const sessionToken = localStorage.getItem("tebex_token");
-    const basketRes = await fetch(`${HEADLESS_URL}/accounts/${TOKEN}/baskets`, {
-      method: "POST",
-      headers: { 
-        "Content-Type": "application/json",
-        ...(sessionToken && { "X-Tebex-Session": sessionToken }) 
-      },
-      body: JSON.stringify({
-        complete_url: `${window.location.origin}/success`,
-        cancel_url: window.location.href,
-      }),
-    });
-    const { data: basket } = await basketRes.json();
-
-    for (const id of packageIds) {
-      await fetch(`${HEADLESS_URL}/accounts/${TOKEN}/baskets/${basket.ident}/packages`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ package_id: Number(id), quantity: 1 }),
-      });
+    // Tebex returns { data: { id, username, meta: { avatar } } }
+    if (json.data) {
+       return {
+         id: json.data.id,
+         username: json.data.username,
+         avatar: json.data.meta?.avatar || `https://api.dicebear.com/7.x/avataaars/svg?seed=${json.data.username}`
+       };
     }
-    return `https://checkout.tebex.io/checkout/${basket.ident}`;
+    return null;
   } catch { return null; }
 }

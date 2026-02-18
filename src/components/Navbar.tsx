@@ -1,11 +1,10 @@
 import { useState } from "react";
 import { Link, useLocation } from "react-router-dom";
-import { Menu, X, ChevronDown, ShoppingCart, LogIn, User as UserIcon, LogOut } from "lucide-react";
+import { Menu, X, ChevronDown, ShoppingCart, LogIn, LogOut, Loader2 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import Logo from "@/assets/core.png";
 import { useCart } from "@/hooks/useCart";
-import { useAuth } from "@/hooks/useAuth"; // Added
-import { getLoginUrl } from "@/lib/tebex"; // Added
+import { useAuth } from "@/hooks/useAuth";
 import CartDrawer from "./CartDrawer";
 
 const navLinks = [
@@ -21,26 +20,58 @@ const Navbar = () => {
   const [currencyOpen, setCurrencyOpen] = useState(false);
   const [selectedCurrency, setSelectedCurrency] = useState("EUR");
   const [cartOpen, setCartOpen] = useState(false);
+  const [isLoggingIn, setIsLoggingIn] = useState(false); // Loading state for API call
   
   const { items } = useCart();
-  const { user, isAuthenticated, logout } = useAuth(); // Access Auth state
+  const { user, isAuthenticated, logout } = useAuth();
   const location = useLocation();
 
-  const actionBtnClass = "flex items-center justify-center rounded-lg border border-border/50 bg-background text-muted-foreground hover:text-foreground hover:bg-secondary transition-all duration-200";
+  const actionBtnClass = "flex items-center justify-center rounded-lg border border-border/50 bg-background text-muted-foreground hover:text-foreground hover:bg-secondary transition-all duration-200 disabled:opacity-50";
+
+  // Unified Login Handler
+const handleLogin = async () => {
+  if (isLoggingIn) return;
+  setIsLoggingIn(true);
+
+  try {
+    localStorage.setItem("tebex_pending_checkout", "0");
+
+    const resp = await fetch("/api/tebex/start", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ cart: [] }),
+    });
+
+    const data = await resp.json();
+    if (!resp.ok || !data.authUrl || !data.basketIdent) {
+      console.error(data);
+      alert(data?.error || "Login failed.");
+      return;
+    }
+
+    localStorage.setItem("tebex_basketIdent", data.basketIdent);
+    window.location.href = data.authUrl;
+  } catch (error) {
+    console.error("Login redirect failed:", error);
+    alert("Login failed.");
+  } finally {
+    setIsLoggingIn(false);
+  }
+};
 
   return (
     <>
       <nav className="fixed top-0 left-0 right-0 z-50 glass border-b border-border/50">
         <div className="container mx-auto px-4">
           <div className="flex items-center justify-between h-16">
+            
             {/* Logo Section */}
             <Link to="/" className="flex items-center gap-2 group">
               <div className="w-9 h-9 flex items-center justify-center">
                 <img src={Logo} alt="Logo" className="w-8 h-8 object-contain" />
               </div>
               <span className="font-display text-lg font-bold tracking-wider text-foreground">
-                Vertex
-                <span style={{ color: "#00D0FF" }}>Core</span>
+                Vertex <span style={{ color: "#00D0FF" }}>Core</span>
               </span>
             </Link>
 
@@ -64,6 +95,7 @@ const Navbar = () => {
 
             {/* Desktop Actions */}
             <div className="hidden md:flex items-center gap-3">
+              {/* Currency Dropdown */}
               <div className="relative">
                 <button
                   onClick={() => setCurrencyOpen(!currencyOpen)}
@@ -81,7 +113,7 @@ const Navbar = () => {
                         onClick={() => { setSelectedCurrency(curr); setCurrencyOpen(false); }}
                         className={cn(
                           "block w-full text-left px-3 py-2 text-sm transition-colors",
-                          selectedCurrency === curr ? "font-bold text-primary bg-primary/10" : "font-normal text-muted-foreground hover:text-foreground hover:bg-secondary"
+                          selectedCurrency === curr ? "font-bold text-primary bg-primary/10" : "text-muted-foreground hover:text-foreground hover:bg-secondary"
                         )}
                       >
                         {curr}
@@ -91,7 +123,7 @@ const Navbar = () => {
                 )}
               </div>
 
-              {/* Shopping Cart Button */}
+              {/* Cart Button */}
               <button 
                 onClick={() => setCartOpen(true)} 
                 className={cn(actionBtnClass, "p-2 relative")}
@@ -108,7 +140,7 @@ const Navbar = () => {
               {isAuthenticated ? (
                 <div className="flex items-center gap-2 bg-secondary/50 p-1 pr-3 rounded-lg border border-border/50">
                   <img 
-                    src={user?.avatar} 
+                    src={user?.avatar || "https://api.dicebear.com/7.x/avataaars/svg?seed=Felix"} 
                     alt="User" 
                     className="w-7 h-7 rounded-md border border-primary/30"
                   />
@@ -118,18 +150,22 @@ const Navbar = () => {
                   <button 
                     onClick={logout}
                     className="ml-1 p-1 hover:text-red-400 transition-colors"
-                    title="Logout"
                   >
                     <LogOut className="w-3.5 h-3.5" />
                   </button>
                 </div>
               ) : (
                 <button 
-                  onClick={() => window.location.href = getLoginUrl()}
-                  className={cn(actionBtnClass, "px-4 py-2 text-sm font-medium gap-2")}
+                  onClick={handleLogin}
+                  disabled={isLoggingIn}
+                  className={cn(actionBtnClass, "px-4 py-2 text-sm font-medium gap-2 border-primary/20")}
                 >
-                  <LogIn className="w-5 h-5" />
-                  <span>Login</span>
+                  {isLoggingIn ? (
+                    <Loader2 className="w-5 h-5 animate-spin text-primary" />
+                  ) : (
+                    <LogIn className="w-5 h-5" />
+                  )}
+                  <span>{isLoggingIn ? "Connecting..." : "Login"}</span>
                 </button>
               )}
             </div>
@@ -160,57 +196,31 @@ const Navbar = () => {
               </div>
               
               <div className="px-4 space-y-4">
-                <div className="flex items-center justify-between border-t border-border/20 pt-4">
-                  <span className="text-sm text-muted-foreground">Currency</span>
-                  <div className="flex gap-1">
-                    {currencies.map((curr) => (
-                      <button 
-                        key={curr}
-                        onClick={() => setSelectedCurrency(curr)}
-                        className={cn(
-                          "text-xs px-3 py-1.5 rounded-md border transition-all",
-                          selectedCurrency === curr ? "bg-primary/10 text-primary border-primary/50" : "border-border text-muted-foreground"
-                        )}
-                      >
-                        {curr}
-                      </button>
-                    ))}
-                  </div>
-                </div>
-
                 <div className="flex flex-col gap-2">
                   <button 
-                    onClick={() => {
-                      setIsOpen(false);
-                      setCartOpen(true);
-                    }}
-                    className={cn(actionBtnClass, "w-full py-2.5 gap-2 text-sm font-medium relative")}
+                    onClick={() => { setIsOpen(false); setCartOpen(true); }}
+                    className={cn(actionBtnClass, "w-full py-2.5 gap-2 text-sm font-medium")}
                   >
                     <ShoppingCart className="w-5 h-5" />
                     <span>Cart ({items.length})</span>
                   </button>
 
                   {isAuthenticated ? (
-                    <div className="flex flex-col gap-2">
-                       <div className="flex items-center gap-3 px-4 py-2.5 bg-secondary/50 rounded-lg border border-border/50">
-                        <img src={user?.avatar} className="w-6 h-6 rounded-md" />
-                        <span className="text-sm font-bold uppercase">{user?.username}</span>
-                      </div>
-                      <button 
-                        onClick={logout}
-                        className={cn(actionBtnClass, "w-full py-2.5 gap-2 text-sm font-medium text-red-400 border-red-400/20 hover:bg-red-400/10")}
-                      >
-                        <LogOut className="w-5 h-5" />
-                        <span>Logout</span>
-                      </button>
-                    </div>
+                    <button 
+                      onClick={logout}
+                      className={cn(actionBtnClass, "w-full py-2.5 gap-2 text-sm font-medium text-red-400")}
+                    >
+                      <LogOut className="w-5 h-5" />
+                      <span>Logout ({user?.username})</span>
+                    </button>
                   ) : (
                     <button 
-                      onClick={() => window.location.href = getLoginUrl()}
+                      onClick={handleLogin}
+                      disabled={isLoggingIn}
                       className={cn(actionBtnClass, "w-full py-2.5 gap-2 text-sm font-medium bg-primary/10 text-primary border-primary/50")}
                     >
-                      <LogIn className="w-5 h-5" />
-                      <span>Login with Cfx</span>
+                      {isLoggingIn ? <Loader2 className="w-5 h-5 animate-spin" /> : <LogIn className="w-5 h-5" />}
+                      <span>{isLoggingIn ? "Connecting..." : "Login with Cfx"}</span>
                     </button>
                   )}
                 </div>
