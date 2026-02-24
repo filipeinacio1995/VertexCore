@@ -1,17 +1,18 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { Suspense, useEffect, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import { TEBEX_TOKEN, tebexGet, tebexPost } from "@/lib/tebex";
 import { getCart, clearCart } from "@/lib/cart";
 
-export default function CheckoutReturnPage() {
+function ReturnInner() {
   const sp = useSearchParams();
   const [msg, setMsg] = useState("Finalizing checkout…");
 
   useEffect(() => {
     (async () => {
       const basket = sp.get("basket");
+
       if (!basket) {
         setMsg("Missing basket ident. Try checkout again.");
         return;
@@ -26,7 +27,7 @@ export default function CheckoutReturnPage() {
       try {
         setMsg("Adding items to your Tebex basket…");
 
-        // Now that user is authenticated, add packages
+        // After login, add packages
         for (const it of cart) {
           await tebexPost(`/baskets/${basket}/packages`, {
             package_id: String(it.package_id),
@@ -36,7 +37,7 @@ export default function CheckoutReturnPage() {
 
         setMsg("Redirecting to payment…");
 
-        // Fetch basket and redirect to hosted checkout
+        // Fetch basket checkout link
         const basketResp = await tebexGet(`/accounts/${TEBEX_TOKEN}/baskets/${basket}`);
         const checkoutUrl =
           basketResp?.data?.links?.checkout ?? basketResp?.links?.checkout;
@@ -59,5 +60,20 @@ export default function CheckoutReturnPage() {
       <h1>Checkout</h1>
       <p>{msg}</p>
     </main>
+  );
+}
+
+export default function CheckoutReturnPage() {
+  return (
+    <Suspense
+      fallback={
+        <main style={{ maxWidth: 800, margin: "0 auto", padding: 24 }}>
+          <h1>Checkout</h1>
+          <p>Loading…</p>
+        </main>
+      }
+    >
+      <ReturnInner />
+    </Suspense>
   );
 }
