@@ -72,6 +72,11 @@ export default function Navbar() {
     };
 
     compute();
+    
+    // Navbar can be told to open the drawer from anywhere
+    const open = () => setCartOpen(true);
+    window.addEventListener("cart:open", open);
+    return () => window.removeEventListener("cart:open", open);
 
     const onVis = () => {
       if (document.visibilityState === "visible") compute();

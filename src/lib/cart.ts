@@ -3,6 +3,7 @@ export type CartItem = {
   name: string;
   price: number; // display only
   quantity: number;
+  image?: string; // ✅ added
 };
 
 const KEY = "tebex_cart_v1";
