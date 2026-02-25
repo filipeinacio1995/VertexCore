@@ -3,8 +3,12 @@
 import { useEffect, useMemo, useState } from "react";
 import { tebexGet, TEBEX_TOKEN } from "@/lib/tebex";
 import { addToCart } from "@/lib/cart";
-import TopBar from "@/components/Navbar";
+import Navbar from "@/components/Navbar";
 import HeroSection from "@/components/HeroSection";
+import Footer from "@/components/Footer";
+import WhyChooseUs from "@/components/WhyChooseUs";
+import StatsSection from "@/components/StatsSection";
+
 
 type TebexPackage = {
   id: number;
@@ -41,7 +45,7 @@ export default function HomePage() {
 
   return (
     <main style={{ fontFamily: "system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif" }}>
-      <TopBar />
+      <Navbar />
       <main className="pt-16">
       <HeroSection/>
       <div style={{ maxWidth: 1100, margin: "0 auto", padding: 24 }}>
@@ -99,8 +103,10 @@ export default function HomePage() {
           </section>
         ))}
       </div>
-          </main>
-
+      </main>
+    <StatsSection />
+    <WhyChooseUs />
+    <Footer />
     </main>
   );
 }

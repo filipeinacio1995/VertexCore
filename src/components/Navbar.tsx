@@ -158,22 +158,18 @@ export default function Navbar() {
 
             {/* Auth Area */}
             {isAuthenticated ? (
-              <div className="flex items-center gap-2 rounded-xl border border-border/50 bg-background px-3 py-2">
+              <div className="flex items-center gap-2 rounded-xl border border-border/50 bg-background pl-3 ">
                 <div className="leading-tight">
                   <div className="text-sm font-semibold text-foreground">{displayName}</div>
-                  <div className="flex items-center gap-2 text-xs text-primary">
-                    <span className="inline-block w-2 h-2 rounded-full bg-green-500" />
-                    <span>Online</span>
-                  </div>
                 </div>
 
                 <button
                   onClick={handleLogout}
-                  className="ml-2 inline-flex items-center justify-center w-9 h-9 rounded-lg border border-border/50 hover:bg-secondary transition"
+                  className="ml-2 inline-flex items-center justify-center w-9 h-9 rounded-lg  hover:bg-secondary transition"
                   aria-label="Logout"
                   title="Logout"
                 >
-                  <LogOut className="w-5 h-5" />
+                  <LogOut className="w-4 h-4" />
                 </button>
               </div>
             ) : (

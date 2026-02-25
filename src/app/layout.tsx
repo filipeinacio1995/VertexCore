@@ -2,8 +2,8 @@ import type { Metadata } from "next";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "Tebex Shop",
-  description: "Frontend-only Tebex shop on Vercel",
+  title: "VertexCore",
+  description: "A Team of Developers",
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
