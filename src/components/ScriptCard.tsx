@@ -1,12 +1,13 @@
 "use client";
 
+import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import Link from "next/link";
 import { Eye, ShoppingCart } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { addToCart } from "@/lib/cart";
+import { addToCart, getCart } from "@/lib/cart";
 
 export type Script = {
   id: number;
@@ -25,8 +26,23 @@ export default function ScriptCard({
   script: Script;
   index: number;
 }) {
-  const handleAddToCart = (e: React.MouseEvent) => {
+  const [inCart, setInCart] = useState(false);
+
+  // ✅ keep in sync with cart changes
+  useEffect(() => {
+    const sync = () => {
+      const cart = getCart();
+      setInCart(cart.some((c) => c.package_id === script.id));
+    };
+
+    sync();
+    window.addEventListener("cart:changed", sync);
+    return () => window.removeEventListener("cart:changed", sync);
+  }, [script.id]);
+
+  const handleBuy = (e: React.MouseEvent) => {
     e.preventDefault();
+    if (inCart) return;
 
     addToCart(
       {
@@ -38,6 +54,8 @@ export default function ScriptCard({
       1
     );
 
+    // setInCart(true) is optional now (event will sync), but keeping it feels instant
+    setInCart(true);
     window.dispatchEvent(new Event("cart:open"));
   };
 
@@ -62,7 +80,6 @@ export default function ScriptCard({
           }}
         />
 
-        {/* Category badge ONLY */}
         <Badge className="absolute top-3 left-3 bg-primary/20 text-primary border border-primary/30 backdrop-blur-sm">
           {script.category}
         </Badge>
@@ -74,21 +91,14 @@ export default function ScriptCard({
           {script.name}
         </h3>
 
-        {/* ✅ true "..." truncation */}
-<p className="mt-2 text-[13px] leading-relaxed text-muted-foreground/90 line-clamp-2">
-  {script.description}
-</p>
+        <p className="mt-2 text-[13px] leading-relaxed text-muted-foreground/90 line-clamp-2 flex-grow">
+          {script.description}
+        </p>
 
-        <div className="flex items-center justify-between pt-4 border-t border-white/5">
-          {/* ✅ improved price styling */}
-          <div className="flex flex-col leading-none">
-            <span className="text-[10px] uppercase tracking-[0.25em] text-muted-foreground/80">
-              Price
-            </span>
-            <span className="text-2xl font-black tracking-tight text-white/90">
-              €{(Number(script.price) || 0).toFixed(2)}
-            </span>
-          </div>
+        <div className="flex items-center justify-between pt-4 mt-4 border-t border-white/5">
+          <span className="text-2xl font-black tracking-tight text-white/90">
+            €{(Number(script.price) || 0).toFixed(2)}
+          </span>
 
           <div className="flex gap-2">
             <Button
@@ -103,17 +113,22 @@ export default function ScriptCard({
               </Link>
             </Button>
 
-            {/* ✅ new Buy button style */}
-                        <Button
-              onClick={handleAddToCart}
-              size="sm"
-              className="h-9 px-4 rounded-xl font-black 
-                         bg-white text-black hover:bg-primary transition-colors
-                         shadow-[0_0_0_1px_rgba(255,255,255,0.08)]"
+            <button
+              onClick={handleBuy}
+              disabled={inCart}
+              className={[
+                "h-9 px-4 rounded-xl font-black shadow-[0_0_0_1px_rgba(255,255,255,0.08)]",
+                "transition-colors",
+                inCart
+                  ? "bg-white/10 text-white/40 cursor-not-allowed"
+                  : "bg-white text-black hover:bg-primary cursor-pointer",
+              ].join(" ")}
             >
-              <ShoppingCart className="w-4 h-4 mr-1.5" />
-              Buy
-            </Button>
+              <span className="inline-flex items-center gap-2">
+                <ShoppingCart className="w-4 h-4" />
+                {inCart ? "In cart" : "Buy"}
+              </span>
+            </button>
           </div>
         </div>
       </div>

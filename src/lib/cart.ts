@@ -1,3 +1,5 @@
+//lib/cart.ts
+
 export type CartItem = {
   package_id: number;
   name: string;
@@ -19,6 +21,7 @@ export function getCart(): CartItem[] {
 
 export function setCart(items: CartItem[]) {
   localStorage.setItem(KEY, JSON.stringify(items));
+  window.dispatchEvent(new Event("cart:changed"));
 }
 
 export function addToCart(item: Omit<CartItem, "quantity">, qty = 1) {
@@ -38,3 +41,5 @@ export function removeFromCart(package_id: number) {
 export function clearCart() {
   setCart([]);
 }
+ 
+

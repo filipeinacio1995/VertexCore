@@ -61,39 +61,36 @@ export default function Navbar() {
   // 🔥 HYDRATION-SAFE CART COUNT
   const [itemCount, setItemCount] = useState(0);
 
-  useEffect(() => {
-    const compute = () => {
-      try {
-        const count = getCart().reduce((sum, it) => sum + it.quantity, 0);
-        setItemCount(count);
-      } catch {
-        setItemCount(0);
-      }
-    };
+useEffect(() => {
+  const compute = () => {
+    try {
+      const count = getCart().reduce((sum, it) => sum + it.quantity, 0);
+      setItemCount(count);
+    } catch {
+      setItemCount(0);
+    }
+  };
 
-    compute();
-    
-    // Navbar can be told to open the drawer from anywhere
-    const open = () => setCartOpen(true);
-    window.addEventListener("cart:open", open);
-    return () => window.removeEventListener("cart:open", open);
+  const open = () => setCartOpen(true);
 
-    const onVis = () => {
-      if (document.visibilityState === "visible") compute();
-    };
+  compute();
 
-    window.addEventListener("focus", compute);
-    document.addEventListener("visibilitychange", onVis);
+  window.addEventListener("cart:open", open);
+  window.addEventListener("cart:changed", compute);
+  window.addEventListener("focus", compute);
 
-    // Optional but safe: cart changes without navigation
-    const id = window.setInterval(compute, 800);
+  const onVis = () => {
+    if (document.visibilityState === "visible") compute();
+  };
+  document.addEventListener("visibilitychange", onVis);
 
-    return () => {
-      window.removeEventListener("focus", compute);
-      document.removeEventListener("visibilitychange", onVis);
-      window.clearInterval(id);
-    };
-  }, []);
+  return () => {
+    window.removeEventListener("cart:open", open);
+    window.removeEventListener("cart:changed", compute);
+    window.removeEventListener("focus", compute);
+    document.removeEventListener("visibilitychange", onVis);
+  };
+}, []);
 
   // 🔐 AUTH STATE
   useEffect(() => {
