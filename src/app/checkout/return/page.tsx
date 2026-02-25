@@ -1,18 +1,44 @@
 "use client";
 
-import { Suspense, useEffect, useState } from "react";
+import { Suspense, useEffect, useRef, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import { TEBEX_TOKEN, tebexGet, tebexPost } from "@/lib/tebex";
 import { getCart, clearCart } from "@/lib/cart";
+import { setUser } from "@/lib/user";
 
-function ReturnInner() {
+function extractAndSaveUser(basketResp: any) {
+  const b = basketResp?.data ?? basketResp;
+
+  const username =
+    b?.username ??
+    b?.customer?.username ??
+    b?.user?.username ??
+    b?.auth?.username ??
+    null;
+
+  const username_id =
+    b?.username_id ??
+    b?.customer?.username_id ??
+    b?.user?.username_id ??
+    b?.auth?.username_id ??
+    null;
+
+  if (username || username_id) {
+    setUser({ username: username ?? undefined, username_id: username_id ?? undefined });
+  }
+}
+
+function Inner() {
   const sp = useSearchParams();
   const [msg, setMsg] = useState("Finalizing checkout…");
+  const startedRef = useRef(false);
 
   useEffect(() => {
+    if (startedRef.current) return;
+    startedRef.current = true;
+
     (async () => {
       const basket = sp.get("basket");
-
       if (!basket) {
         setMsg("Missing basket ident. Try checkout again.");
         return;
@@ -24,21 +50,28 @@ function ReturnInner() {
         return;
       }
 
-      try {
-        setMsg("Adding items to your Tebex basket…");
+      const lockKey = `tebex_basket_items_added_${basket}`;
+      const alreadyAdded = localStorage.getItem(lockKey) === "1";
 
-        // After login, add packages
-        for (const it of cart) {
-          await tebexPost(`/baskets/${basket}/packages`, {
-            package_id: String(it.package_id),
-            quantity: it.quantity,
-          });
+      try {
+        if (!alreadyAdded) {
+          setMsg("Adding items to your Tebex basket…");
+
+          for (const it of cart) {
+            await tebexPost(`/baskets/${basket}/packages`, {
+              package_id: String(it.package_id),
+              quantity: it.quantity,
+            });
+          }
+
+          localStorage.setItem(lockKey, "1");
+        } else {
+          setMsg("Items already added. Redirecting to payment…");
         }
 
-        setMsg("Redirecting to payment…");
-
-        // Fetch basket checkout link
         const basketResp = await tebexGet(`/accounts/${TEBEX_TOKEN}/baskets/${basket}`);
+        extractAndSaveUser(basketResp);
+
         const checkoutUrl =
           basketResp?.data?.links?.checkout ?? basketResp?.links?.checkout;
 
@@ -48,7 +81,7 @@ function ReturnInner() {
         }
 
         clearCart();
-        window.location.href = checkoutUrl;
+        window.location.assign(checkoutUrl);
       } catch (e: any) {
         setMsg(e?.message ?? "Failed to continue to checkout.");
       }
@@ -73,7 +106,7 @@ export default function CheckoutReturnPage() {
         </main>
       }
     >
-      <ReturnInner />
+      <Inner />
     </Suspense>
   );
 }
