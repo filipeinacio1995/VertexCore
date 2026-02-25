@@ -1,5 +1,5 @@
 "use client";
-
+// app/login/page.tsx
 import { useEffect, useState } from "react";
 import { SITE_URL, TEBEX_TOKEN, tebexGet, tebexPost } from "@/lib/tebex";
 
@@ -9,13 +9,14 @@ export default function LoginPage() {
   useEffect(() => {
     (async () => {
       try {
+        // ✅ default to home/store if you want; keep "/" safe
         const returnTo =
           new URLSearchParams(window.location.search).get("returnTo") || "/";
 
         // Create basket for auth
         const basket = await tebexPost(`/accounts/${TEBEX_TOKEN}/baskets`, {
           complete_url: `${SITE_URL}/auth/return?returnTo=${encodeURIComponent(returnTo)}`,
-          cancel_url: `${SITE_URL}${returnTo}`,
+          cancel_url: `${SITE_URL}/`, // ✅ cancel always safe (drawer-first)
           complete_auto_redirect: true,
         });
 

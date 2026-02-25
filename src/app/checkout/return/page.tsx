@@ -1,5 +1,5 @@
 "use client";
-
+// app/checkout/return/page.tsx
 import { Suspense, useEffect, useRef, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import { TEBEX_TOKEN, tebexGet, tebexPost } from "@/lib/tebex";
@@ -72,15 +72,14 @@ function Inner() {
         const basketResp = await tebexGet(`/accounts/${TEBEX_TOKEN}/baskets/${basket}`);
         extractAndSaveUser(basketResp);
 
-        const checkoutUrl =
-          basketResp?.data?.links?.checkout ?? basketResp?.links?.checkout;
-
+        const checkoutUrl = basketResp?.data?.links?.checkout ?? basketResp?.links?.checkout;
         if (!checkoutUrl) {
           setMsg("Checkout URL not found on basket.");
           return;
         }
 
         clearCart();
+        localStorage.removeItem("pending_checkout"); // ✅ important
         window.location.assign(checkoutUrl);
       } catch (e: any) {
         setMsg(e?.message ?? "Failed to continue to checkout.");

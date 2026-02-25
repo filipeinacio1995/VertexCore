@@ -23,8 +23,10 @@ export function setCart(items: CartItem[]) {
 export function addToCart(item: Omit<CartItem, "quantity">, qty = 1) {
   const cart = getCart();
   const found = cart.find((c) => c.package_id === item.package_id);
-  if (found) found.quantity += qty;
-  else cart.push({ ...item, quantity: qty });
+
+  if (found) return; // ✅ already in cart, do nothing
+
+  cart.push({ ...item, quantity: 1 }); // ✅ always 1
   setCart(cart);
 }
 

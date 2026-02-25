@@ -1,5 +1,5 @@
 "use client";
-
+// app/auth/return/page.tsx
 import { Suspense, useEffect, useRef, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import { TEBEX_TOKEN, tebexGet } from "@/lib/tebex";
@@ -41,13 +41,18 @@ function Inner() {
       const returnTo = sp.get("returnTo") || "/";
 
       try {
-        if (!basket) {
-          window.location.assign(returnTo);
-          return;
+        if (basket) {
+          const basketResp = await tebexGet(`/accounts/${TEBEX_TOKEN}/baskets/${basket}`);
+          extractAndSaveUser(basketResp);
         }
 
-        const basketResp = await tebexGet(`/accounts/${TEBEX_TOKEN}/baskets/${basket}`);
-        extractAndSaveUser(basketResp);
+        // ✅ auto-continue checkout if user tried checkout while logged out
+        const pendingCheckout = localStorage.getItem("pending_checkout") === "1";
+        if (pendingCheckout && basket) {
+          setMsg("Continuing checkout…");
+          window.location.assign(`/checkout/return?basket=${encodeURIComponent(basket)}`);
+          return;
+        }
 
         setMsg("Redirecting…");
         window.location.assign(returnTo);
