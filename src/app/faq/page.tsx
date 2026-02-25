@@ -65,10 +65,10 @@ export default function StorePage() {
                 transition={{ duration: 0.6 }}
                 className="text-center mb-16"
               >
-                <h1 className="font-display text-4xl md:text-5xl font-black tracking-tight mb-4">
-                  FREQUENTLY ASKED <span className="text-gradient">QUESTIONS</span>
+                <h1 className="font-display text-3xl md:text-4xl font-bold tracking-tight mb-4 uppercase italic">
+                  FREQUENTLY ASKED <span className="text-primary">QUESTIONS</span>
                 </h1>
-                <p className="text-muted-foreground max-w-lg mx-auto">
+                <p className="text-muted-foreground max-w-lg mx-auto uppercase text-[10px] tracking-[0.2em] font-bold">
                   Find answers to the most common questions about our scripts and services.
                 </p>
               </motion.div>
@@ -106,13 +106,13 @@ export default function StorePage() {
                 transition={{ delay: 0.4, duration: 0.5 }}
                 className="mt-16 text-center glass rounded-xl p-8 md:p-12 border-primary/20"
               >
-                <h2 className="font-display text-2xl font-bold tracking-tight mb-3">
-                  STILL HAVE <span className="text-gradient">QUESTIONS</span>?
+                <h2 className="font-display text-3xl md:text-4xl font-bold tracking-tight mb-4 uppercase italic">
+                  STILL HAVE <span className="text-primary">QUESTIONS</span>?
                 </h2>
-                <p className="text-muted-foreground mb-6 max-w-md mx-auto">
+                <p className="text-muted-foreground max-w-lg mx-auto uppercase text-[10px] tracking-[0.2em] font-bold">
                   Join our Discord and speak directly with our support team.
                 </p>
-                <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
+                <div className="flex flex-col sm:flex-row items-center justify-center gap-4 pt-4">
                   <Button asChild size="lg" className="font-display text-sm tracking-wider glow-primary">
                     <a href="https://discord.gg/your-discord" target="_blank" rel="noopener noreferrer">
                       <SiDiscord className="w-4 h-4 mr-2" />

@@ -97,10 +97,10 @@ export default function StorePage() {
               transition={{ duration: 0.6 }}
               className="text-center mb-16"
             >
-              <h2 className="font-display text-3xl md:text-4xl font-bold tracking-tight mb-4">
-                OUR <span className="text-primary text-gradient uppercase">Products</span>
+              <h2 className="font-display text-3xl md:text-4xl font-bold tracking-tight mb-4 uppercase italic">
+                OUR <span className="text-primary">Products</span>
               </h2>
-              <p className="text-muted-foreground max-w-lg mx-auto uppercase tracking-widest text-xs">
+              <p className="text-muted-foreground max-w-lg mx-auto uppercase text-[10px] tracking-[0.2em] font-bold">
                 Our most popular resources, trusted by hundreds of servers.
               </p>
             </motion.div>

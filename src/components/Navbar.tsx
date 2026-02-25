@@ -173,11 +173,11 @@ useEffect(() => {
 
               {/* AUTH */}
               {isAuthenticated ? (
-                <div className="flex items-center gap-2 rounded-xl border border-border/50 bg-background pl-3">
+                <div className="flex items-center gap-2 rounded-xl border border-border/50 bg-background pl-3 hover:bg-secondary transition">
                   <span className="text-sm font-semibold">{displayName}</span>
                   <button
                     onClick={handleLogout}
-                    className="w-9 h-9 rounded-lg hover:bg-secondary transition"
+                    className="w-9 h-9 rounded-lg transition"
                   >
                     <LogOut className="w-4 h-4" />
                   </button>

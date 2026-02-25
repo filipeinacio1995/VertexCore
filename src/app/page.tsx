@@ -8,6 +8,7 @@ import HeroSection from "@/components/HeroSection";
 import Footer from "@/components/Footer";
 import WhyChooseUs from "@/components/WhyChooseUs";
 import StatsSection from "@/components/StatsSection";
+import FeaturedScripts from "@/components/FeaturedScripts";
 
 
 type TebexPackage = {
@@ -49,11 +50,12 @@ export default function HomePage() {
       <main className="pt-16"/>
       <HeroSection/>
       <main className="pt-16"/>
+      <FeaturedScripts/>
+      <main className="pt-16"/>
       <StatsSection />
       <main className="pt-16"/>
       <WhyChooseUs />
       <main className="pt-16"/>
-      <Footer />
     </main>
   );
 }

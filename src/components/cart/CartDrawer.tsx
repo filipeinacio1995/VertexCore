@@ -188,12 +188,8 @@ export default function CartDrawer({
                     className="group flex gap-4 bg-white/[0.03] hover:bg-white/[0.06] p-4 rounded-[1.5rem] border border-white/5 transition-all duration-300"
                   >
                     <div className="relative">
-                      {/* optional image support */}
-                      {/* @ts-ignore */}
                       {it.image ? (
-                        // @ts-ignore
                         <img
-                          // @ts-ignore
                           src={it.image}
                           className="w-20 h-20 rounded-2xl object-cover border border-white/10"
                           alt={it.name}
@@ -203,7 +199,7 @@ export default function CartDrawer({
                           <ShoppingBag className="w-6 h-6 text-white/30" />
                         </div>
                       )}
-                      <div className="absolute inset-0 bg-primary/10 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity" />
+                      <div className="absolute inset-0 bg-white/[0.04] rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity" />
                     </div>
 
                     <div className="flex-1 flex flex-col justify-center">
@@ -217,12 +213,8 @@ export default function CartDrawer({
                         <span className="text-[10px] bg-primary/10 text-primary px-2 py-0.5 rounded-full font-bold uppercase">
                           Qty {it.quantity}
                         </span>
-                        <span className="text-[10px] bg-white/5 text-white/60 px-2 py-0.5 rounded-full font-bold uppercase">
-                          Line €{(it.price * it.quantity).toFixed(2)}
-                        </span>
                       </div>
                     </div>
-
                     <button
                       onClick={() => {
                         if (busy) return;

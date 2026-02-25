@@ -107,7 +107,7 @@ export default function ScriptCard({
               size="sm"
               className="h-9 px-3 border-white/10 bg-white/[0.03] hover:bg-white/[0.06]"
             >
-              <Link href={`/script/${script.id}`}>
+              <Link href={`/package/${script.id}`}>
                 <Eye className="w-4 h-4 mr-1.5" />
                 View
               </Link>

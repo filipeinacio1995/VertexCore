@@ -39,7 +39,7 @@ const WhyChooseUs = () => {
             WHY <span className="text-primary">CHOOSE US</span>?
           </h2>
           <p className="text-muted-foreground max-w-lg mx-auto uppercase text-[10px] tracking-[0.2em] font-bold">
-            We deliver quality, performance, and support in every script we create.
+            We deliver quality, performance, and support in every asset we create.
           </p>
         </motion.div>
 
