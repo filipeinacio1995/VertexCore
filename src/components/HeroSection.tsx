@@ -92,7 +92,7 @@ const HeroSection = () => {
               className="font-display text-sm tracking-wider backdrop-blur-md hover:bg-primary/10 transition-all duration-300 group"
             >
               <a
-                href="https://discord.gg/seu-discord"
+                href="https://discord.gg/k4ZQ952HYb"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="flex items-center gap-3"

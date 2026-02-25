@@ -145,8 +145,7 @@ export default function CartDrawer({
             animate={{ x: 0 }}
             exit={{ x: "100%" }}
             transition={{ type: "spring", damping: 25, stiffness: 200 }}
-            className="fixed right-4 top-4 bottom-4 w-full max-w-md bg-[#0d0d0d]/95 border border-white/10 z-[101] flex flex-col shadow-[0_0_50px_-12px_rgba(0,208,255,0.2)] rounded-[2rem] overflow-hidden"
-          >
+            className=" fixed top-4 bottom-4 left-4 right-4  md:left-auto md:right-4 w-auto md:w-full md:max-w-md bg-[#0d0d0d]/95 border border-white/10 z-[101] flex flex-col shadow-[0_0_50px_-12px_rgba(0,208,255,0.2)] rounded-[2rem] overflow-hidden">
             <div className="p-8 pb-6 flex justify-between items-center relative overflow-hidden">
               <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-primary to-transparent opacity-50" />
               <div>

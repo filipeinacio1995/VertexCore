@@ -114,7 +114,7 @@ export default function StorePage() {
                 </p>
                 <div className="flex flex-col sm:flex-row items-center justify-center gap-4 pt-4">
                   <Button asChild size="lg" className="font-display text-sm tracking-wider glow-primary">
-                    <a href="https://discord.gg/your-discord" target="_blank" rel="noopener noreferrer">
+                    <a href="https://discord.gg/k4ZQ952HYb" target="_blank" rel="noopener noreferrer">
                       <SiDiscord className="w-4 h-4 mr-2" />
                       JOIN OUR DISCORD
                     </a>
