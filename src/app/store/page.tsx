@@ -1,3 +1,4 @@
+// src/app/store/page.tsx
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
@@ -42,30 +43,36 @@ export default function StorePage() {
         setErr(null);
         setLoading(true);
 
-        // Tebex: include packages
-        const res = await tebexGet(`/accounts/${TEBEX_TOKEN}/categories?includePackages=1`);
+        const res = await tebexGet(
+          `/accounts/${TEBEX_TOKEN}/categories?includePackages=1`
+        );
         const data = res?.data ?? res;
 
-        const formatted: Script[] = (Array.isArray(data) ? data : []).flatMap((cat: any) => {
-          const pkgs = getPackagesArray(cat);
+        const formatted: Script[] = (Array.isArray(data) ? data : []).flatMap(
+          (cat: any) => {
+            const pkgs = getPackagesArray(cat);
 
-          return pkgs.map((pkg: any) => {
-            const desc = stripHtml(String(pkg?.description || ""));
-            return {
-              id: Number(pkg?.id),
-              name: pkg?.name || "Unnamed",
-              description: desc.slice(0, 110),
-              longDescription: String(pkg?.description || ""),
-              image: pkg?.image || "https://placehold.co/600x400",
-              price: getPrice(pkg),
-              category: cat?.name || "General",
-            };
-          });
-        });
+            return pkgs.map((pkg: any) => {
+              const desc = stripHtml(String(pkg?.description || ""));
+              return {
+                id: Number(pkg?.id),
+                name: pkg?.name || "Unnamed",
+                description: desc.slice(0, 110),
+                longDescription: String(pkg?.description || ""),
+                image: pkg?.image || "https://placehold.co/600x400",
+                price: getPrice(pkg),
+                category: cat?.name || "General",
+              };
+            });
+          }
+        );
 
         setScripts(formatted);
 
-        const uniqueCats = ["All", ...Array.from(new Set(formatted.map((s) => s.category)))];
+        const uniqueCats = [
+          "All",
+          ...Array.from(new Set(formatted.map((s) => s.category))),
+        ];
         setCategories(uniqueCats);
       } catch (e: any) {
         console.error(e);
@@ -86,16 +93,17 @@ export default function StorePage() {
 
   return (
     <div className="min-h-screen bg-background">
+      <div aria-hidden className="pointer-events-none absolute left-1/2 top-[52%] -translate-x-1/2 -translate-y-1/2 w-[250px] h-[250px] rounded-full bg-primary/30 blur-[160px] z-0"/>
+      <div aria-hidden className="pointer-events-none absolute left-1/2 top-[52%] -translate-x-1/2 -translate-y-1/2 w-[100px] h-[100px] rounded-full bg-primary/20 blur-[100px] z-0"/>
       <main className="pt-24 pb-20">
-        <div className="container mx-auto px-4">
-          <header className="text-center mb-12">
+        <div className="container mx-auto px-4 relative overflow-hidden">
+          <header className="text-center mb-12 relative z-10">
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ duration: 0.6 }}
-              className="text-center mb-16"
-            >
+              className="text-center mb-16">
               <h2 className="font-display text-3xl md:text-4xl font-bold tracking-tight mb-4 uppercase italic">
                 OUR <span className="text-primary">Products</span>
               </h2>
@@ -104,8 +112,7 @@ export default function StorePage() {
               </p>
             </motion.div>
           </header>
-
-          <div className="flex flex-wrap justify-center gap-2 mb-12">
+          <div className="flex flex-wrap justify-center gap-2 mb-12 relative z-10">
             {categories.map((cat) => (
               <Button
                 key={cat}
@@ -116,43 +123,40 @@ export default function StorePage() {
                   activeCategory === cat
                     ? "border-primary shadow-[0_0_15px_rgba(var(--primary),0.5)]"
                     : "bg-secondary/50 border-white/5 hover:border-primary/50 text-muted-foreground"
-                )}
-              >
+                )}>
                 {cat}
               </Button>
             ))}
           </div>
-
           {err && (
-            <div className="text-center pb-6 text-red-400">
+            <div className="text-center pb-6 text-red-400 relative z-10">
               {err}
             </div>
           )}
-
           {loading ? (
-            <div className="flex flex-col items-center justify-center py-20">
-            <div className="min-h-screen flex items-center justify-center">
-              <div className="honeycomb scale-150">
-                <div></div>
-                <div></div>
-                <div></div>
-                <div></div>
-                <div></div>
-                <div></div>
-                <div></div>
+            <div className="flex flex-col items-center justify-center py-20 relative z-10">
+              <div className="min-h-[50vh] flex items-center justify-center">
+                <div className="honeycomb scale-150">
+                  <div></div>
+                  <div></div>
+                  <div></div>
+                  <div></div>
+                  <div></div>
+                  <div></div>
+                  <div></div>
+                </div>
               </div>
-            </div>
             </div>
           ) : (
             <>
               {filteredScripts.length > 0 ? (
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 relative z-10">
                   {filteredScripts.map((script, index) => (
                     <ScriptCard key={script.id} script={script} index={index} />
                   ))}
                 </div>
               ) : (
-                <div className="text-center py-20 text-muted-foreground">
+                <div className="text-center py-20 text-muted-foreground relative z-10">
                   No products found in this category.
                 </div>
               )}
