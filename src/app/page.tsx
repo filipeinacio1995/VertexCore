@@ -2,14 +2,11 @@
 
 import { useEffect, useMemo, useState } from "react";
 import { tebexGet, TEBEX_TOKEN } from "@/lib/tebex";
-import { addToCart } from "@/lib/cart";
-import Navbar from "@/components/Navbar";
-import HeroSection from "@/components/HeroSection";
-import Footer from "@/components/Footer";
-import WhyChooseUs from "@/components/WhyChooseUs";
-import StatsSection from "@/components/StatsSection";
-import FeaturedScripts from "@/components/FeaturedScripts";
 
+import HeroSection from "@/components/HeroSection";
+import FeaturedScripts from "@/components/FeaturedScripts";
+import StatsSection from "@/components/StatsSection";
+import WhyChooseUs from "@/components/WhyChooseUs";
 
 type TebexPackage = {
   id: number;
@@ -30,7 +27,9 @@ export default function HomePage() {
   useEffect(() => {
     (async () => {
       try {
-        const res = await tebexGet(`/accounts/${TEBEX_TOKEN}/categories?includePackages=1`);
+        const res = await tebexGet(
+          `/accounts/${TEBEX_TOKEN}/categories?includePackages=1`
+        );
         const categories = res?.data ?? res;
         setCats(Array.isArray(categories) ? categories : []);
       } catch (e: any) {
@@ -45,17 +44,26 @@ export default function HomePage() {
   );
 
   return (
-    <main style={{ fontFamily: "system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif" }}>
-      <Navbar />
-      <main className="pt-16"/>
-      <HeroSection/>
-      <main className="pt-16"/>
-      <FeaturedScripts/>
-      <main className="pt-16"/>
-      <StatsSection />
-      <main className="pt-16"/>
-      <WhyChooseUs />
-      <main className="pt-16"/>
+    <main className="pt-16">
+      <HeroSection />
+
+      <section className="mt-24">
+        <FeaturedScripts />
+      </section>
+
+      <section className="mt-24">
+        <StatsSection premiumScriptsCount={packageCount} />
+      </section>
+
+      <section className="mt-24">
+        <WhyChooseUs />
+      </section>
+
+      {err && (
+        <p className="text-center text-red-500 mt-10">
+          {err}
+        </p>
+      )}
     </main>
   );
 }

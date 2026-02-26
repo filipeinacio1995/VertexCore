@@ -31,11 +31,6 @@ const faqItems = [
       "Yes! All future script updates are included with your purchase. When we release improvements, bug fixes, or new features, you will have free access to all versions.",
   },
   {
-    question: "Can I request a refund?",
-    answer:
-      "We offer refunds within 48 hours of purchase, provided the script has not been downloaded. To request a refund, please contact us via Discord.",
-  },
-  {
     question: "Do you offer technical support?",
     answer:
       "Yes, we offer technical support through our Discord server. Our team is available to assist with installation, configuration, and troubleshooting. We typically respond within 24 hours.",
