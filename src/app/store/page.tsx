@@ -2,7 +2,6 @@
 
 import { useEffect, useMemo, useState } from "react";
 import { motion } from "framer-motion";
-
 import { cn } from "@/lib/utils";
 import { tebexGet, TEBEX_TOKEN } from "@/lib/tebex";
 import ScriptCard, { Script } from "@/components/ScriptCard";
@@ -132,10 +131,17 @@ export default function StorePage() {
 
           {loading ? (
             <div className="flex flex-col items-center justify-center py-20">
-              <div className="w-10 h-10 border-4 border-primary border-t-transparent rounded-full animate-spin mb-4" />
-              <p className="font-display text-sm tracking-widest text-muted-foreground">
-                FETCHING FROM TEBEX...
-              </p>
+            <div className="min-h-screen flex items-center justify-center">
+              <div className="honeycomb scale-150">
+                <div></div>
+                <div></div>
+                <div></div>
+                <div></div>
+                <div></div>
+                <div></div>
+                <div></div>
+              </div>
+            </div>
             </div>
           ) : (
             <>

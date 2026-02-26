@@ -205,9 +205,17 @@ export default function ScriptDetailsPage() {
 
   if (loading) {
     return (
-      <div className="min-h-[70vh] flex items-center justify-center">
-        <Loader2 className="w-10 h-10 animate-spin text-primary" />
+    <main className="min-h-screen flex items-center justify-center">
+      <div className="honeycomb scale-150">
+        <div></div>
+        <div></div>
+        <div></div>
+        <div></div>
+        <div></div>
+        <div></div>
+        <div></div>
       </div>
+    </main>
     );
   }
 

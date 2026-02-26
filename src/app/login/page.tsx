@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { SITE_URL, TEBEX_TOKEN, tebexGet, tebexPost } from "@/lib/tebex";
 
+
 export default function LoginPage() {
   const [msg, setMsg] = useState("Preparing login…");
 
@@ -55,9 +56,16 @@ export default function LoginPage() {
   }, []);
 
   return (
-    <main style={{ maxWidth: 800, margin: "0 auto", padding: 24 }}>
-      <h1>Login</h1>
-      <p>{msg}</p>
+    <main className="min-h-screen flex items-center justify-center">
+      <div className="honeycomb scale-150">
+        <div></div>
+        <div></div>
+        <div></div>
+        <div></div>
+        <div></div>
+        <div></div>
+        <div></div>
+      </div>
     </main>
   );
 }

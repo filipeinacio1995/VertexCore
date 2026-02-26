@@ -64,16 +64,33 @@ function Inner() {
   }, [sp]);
 
   return (
-    <main style={{ maxWidth: 800, margin: "0 auto", padding: 24 }}>
-      <h1>Login</h1>
-      <p>{msg}</p>
+    <main className="min-h-screen flex items-center justify-center">
+      <div className="honeycomb">
+        <div></div>
+        <div></div>
+        <div></div>
+        <div></div>
+        <div></div>
+        <div></div>
+        <div></div>
+      </div>
     </main>
   );
 }
 
 export default function AuthReturnPage() {
   return (
-    <Suspense fallback={<main style={{ padding: 24 }}>Loading…</main>}>
+    <Suspense fallback={    <main className="min-h-screen flex items-center justify-center">
+      <div className="honeycomb">
+        <div></div>
+        <div></div>
+        <div></div>
+        <div></div>
+        <div></div>
+        <div></div>
+        <div></div>
+      </div>
+    </main>}>
       <Inner />
     </Suspense>
   );

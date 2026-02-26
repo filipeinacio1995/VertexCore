@@ -88,9 +88,16 @@ function Inner() {
   }, [sp]);
 
   return (
-    <main style={{ maxWidth: 800, margin: "0 auto", padding: 24 }}>
-      <h1>Checkout</h1>
-      <p>{msg}</p>
+    <main className="min-h-screen flex items-center justify-center">
+      <div className="honeycomb scale-150">
+        <div></div>
+        <div></div>
+        <div></div>
+        <div></div>
+        <div></div>
+        <div></div>
+        <div></div>
+      </div>
     </main>
   );
 }
@@ -99,9 +106,16 @@ export default function CheckoutReturnPage() {
   return (
     <Suspense
       fallback={
-        <main style={{ maxWidth: 800, margin: "0 auto", padding: 24 }}>
-          <h1>Checkout</h1>
-          <p>Loading…</p>
+        <main className="min-h-screen flex items-center justify-center">
+          <div className="honeycomb scale-150">
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+          </div>
         </main>
       }
     >

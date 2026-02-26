@@ -1,3 +1,4 @@
+//scr/lib/tebex.ts
 export const TEBEX_TOKEN = process.env.NEXT_PUBLIC_TEBEX_TOKEN!;
 export const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL!;
 

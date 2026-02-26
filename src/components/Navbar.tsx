@@ -145,9 +145,11 @@ export default function Navbar() {
 
               {isAuthenticated ? (
                 <div className="flex items-center gap-2 rounded-xl border border-border/50 bg-background pl-3">
-                  <span className="text-sm font-semibold">{displayName}</span>
+                  <span className="font-display font-bold tracking-wider text-sm">
+                    {displayName}
+                  </span>
                   <button onClick={handleLogout} className="w-9 h-9">
-                    <LogOut className="w-4 h-4" />
+                    <LogOut className="w-4 h-4 text-primary" />
                   </button>
                 </div>
               ) : (
